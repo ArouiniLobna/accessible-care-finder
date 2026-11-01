@@ -6,3 +6,10 @@ export function requireDatabaseUrl(): string {
   }
   return url;
 }
+
+export function refuseInProduction(action: string): void {
+  if (process.env['NODE_ENV'] === 'production') {
+    console.error(`Refusing to ${action} with NODE_ENV=production.`);
+    process.exit(1);
+  }
+}

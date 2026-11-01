@@ -9,7 +9,12 @@ export default defineConfig({
   schema: './src/db/schema.ts',
   out: './drizzle',
   dbCredentials: {
-    url: process.env['DATABASE_URL'] ?? 'postgres://care:care@localhost:5432/care_finder',
+    url:
+      (
+        globalThis as typeof globalThis & {
+          process: { env: Record<string, string | undefined> };
+        }
+      ).process.env['DATABASE_URL'] ?? 'postgres://care:care@localhost:5432/care_finder',
   },
   strict: true,
 });

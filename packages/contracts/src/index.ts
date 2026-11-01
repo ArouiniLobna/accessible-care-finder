@@ -9,3 +9,4 @@ export * from './common';
 export * from './metadata';
 export * from './support-requests';
 export * from './workers';
+export * from './bookings';

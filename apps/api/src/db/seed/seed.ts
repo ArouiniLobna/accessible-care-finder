@@ -24,8 +24,14 @@ function lookup<K extends string>(rows: { id: number; key: string }[], key: K): 
  * Destructive — used by `pnpm db:seed`, `pnpm db:reset` and, later, the demo reset and tests.
  */
 export async function seedDatabase(executor: Executor, dataset: SeedDataset): Promise<void> {
+  // await executor.execute(sql`
+  //   TRUNCATE support_request_services, support_requests, availability_slots,
+  //     worker_languages, worker_services, workers, languages, services
+  //   RESTART IDENTITY CASCADE
+  // `);
+
   await executor.execute(sql`
-    TRUNCATE support_request_services, support_requests, availability_slots,
+    TRUNCATE bookings, support_request_services, support_requests, availability_slots,
       worker_languages, worker_services, workers, languages, services
     RESTART IDENTITY CASCADE
   `);
@@ -48,26 +54,22 @@ export async function seedDatabase(executor: Executor, dataset: SeedDataset): Pr
     .values(
       dataset.workers.map(({ services: _services, languages: _languages, ...worker }) => worker),
     );
-  await executor
-    .insert(workerServices)
-    .values(
-      dataset.workers.flatMap((worker) =>
-        worker.services.map((slug) => ({
-          workerId: worker.id,
-          serviceId: lookup(serviceRows, slug),
-        })),
-      ),
-    );
-  await executor
-    .insert(workerLanguages)
-    .values(
-      dataset.workers.flatMap((worker) =>
-        worker.languages.map((code) => ({
-          workerId: worker.id,
-          languageId: lookup(languageRows, code),
-        })),
-      ),
-    );
+  await executor.insert(workerServices).values(
+    dataset.workers.flatMap((worker) =>
+      worker.services.map((slug) => ({
+        workerId: worker.id,
+        serviceId: lookup(serviceRows, slug),
+      })),
+    ),
+  );
+  await executor.insert(workerLanguages).values(
+    dataset.workers.flatMap((worker) =>
+      worker.languages.map((code) => ({
+        workerId: worker.id,
+        languageId: lookup(languageRows, code),
+      })),
+    ),
+  );
   await executor.insert(availabilitySlots).values(dataset.slots);
 
   const { services: requestServices, ...supportRequest } = dataset.supportRequest;

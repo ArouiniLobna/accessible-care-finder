@@ -24,3 +24,12 @@ export function createDatabase(connectionString: string, maxConnections = 10): D
   const db = drizzle({ client: pool, schema });
   return { db, pool, close: () => pool.end() };
 }
+
+/** Postgres SQLSTATE for unique_violation. */
+export const UNIQUE_VIOLATION = '23505';
+
+export function isPgError(error: unknown): error is { code: string; constraint?: string } {
+  return (
+    typeof error === 'object' && error !== null && 'code' in error && typeof error.code === 'string'
+  );
+}

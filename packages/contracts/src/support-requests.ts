@@ -20,6 +20,7 @@ export const SupportRequestSchema = Type.Object(
       },
     ),
     services: Type.Array(ServiceSchema),
+    replacementBookingId: Type.Union([EntityId, Type.Null()]),
   },
   { title: 'SupportRequest', additionalProperties: false },
 );

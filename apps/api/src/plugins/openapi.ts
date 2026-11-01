@@ -18,6 +18,7 @@ export async function registerOpenApi(app: FastifyInstance): Promise<void> {
       },
       tags: [
         { name: 'workers' },
+        { name: 'bookings' },
         { name: 'support-requests' },
         { name: 'metadata' },
         { name: 'health' },

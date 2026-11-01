@@ -16,6 +16,8 @@ import { genReqId, registerRequestLogging } from './plugins/request-logging';
 import { createWorkerRepository } from './modules/workers/worker.repository';
 import { workerRoutes } from './modules/workers/worker.routes';
 import { createWorkerService } from './modules/workers/worker.service';
+import { bookingRoutes } from './modules/bookings/booking.routes';
+import { createBookingService } from './modules/bookings/booking.service';
 
 export interface AppDependencies {
   config: AppConfig;
@@ -31,7 +33,7 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
   const app = Fastify({
     logger: {
       level: config.logLevel,
-      redact: ['req.headers.authorization', 'req.headers.cookie'],
+      redact: ['req.headers.authorization', 'req.headers.cookie', 'req.headers["idempotency-key"]'],
       ...(config.nodeEnv === 'development'
         ? {
             transport: {
@@ -60,8 +62,8 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
   await app.register(cors, {
     origin: config.corsOrigins,
     methods: ['GET', 'POST'],
-    allowedHeaders: ['content-type', 'x-request-id'],
-    exposedHeaders: ['x-request-id'],
+    allowedHeaders: ['content-type', 'idempotency-key', 'x-request-id'],
+    exposedHeaders: ['x-request-id', 'idempotent-replayed'],
   });
   if (config.enableApiDocs) await registerOpenApi(app);
 
@@ -74,12 +76,14 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
     supportRequests: supportRequestRepository,
     metadata,
   });
+  const bookings = createBookingService({ db, log: app.log });
 
   // ---- Routes
   await app.register(healthRoutes, { db });
   await app.register(metadataRoutes, { prefix: '/api/metadata', metadata });
   await app.register(supportRequestRoutes, { prefix: '/api/support-requests', supportRequests });
   await app.register(workerRoutes, { prefix: '/api/workers', workers });
+  await app.register(bookingRoutes, { prefix: '/api', bookings });
 
   return app;
 }

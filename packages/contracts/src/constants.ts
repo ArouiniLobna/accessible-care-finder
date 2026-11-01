@@ -9,10 +9,14 @@ export const API_ERROR_CODES = [
   'VALIDATION_ERROR',
   'NOT_FOUND',
   'INVALID_CURSOR',
+  'WORKER_NO_LONGER_AVAILABLE',
+  'BOOKING_CONFLICT',
+  'IDEMPOTENCY_KEY_REUSED',
   'INTERNAL_ERROR',
 ] as const;
 
 export const REQUEST_ID_HEADER = 'x-request-id';
+export const IDEMPOTENCY_KEY_HEADER = 'idempotency-key';
 
 export const AVAILABILITY_STATUSES = ['AVAILABLE', 'TENTATIVE', 'BOOKED', 'UNAVAILABLE'] as const;
 

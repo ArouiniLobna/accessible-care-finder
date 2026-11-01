@@ -20,6 +20,7 @@ import {
   serial,
   text,
   timestamp,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { AVAILABILITY_STATUSES, SUPPORT_REQUEST_STATUSES } from '@acf/contracts/constants';
 
@@ -30,6 +31,7 @@ const timestamps = {
 
 export const availabilityStatus = pgEnum('availability_status', AVAILABILITY_STATUSES);
 export const supportRequestStatus = pgEnum('support_request_status', SUPPORT_REQUEST_STATUSES);
+export const bookingStatus = pgEnum('booking_status', ['CONFIRMED', 'CANCELLED']);
 
 export const workers = pgTable(
   'workers',
@@ -161,5 +163,36 @@ export const supportRequestServices = pgTable(
   },
   (t) => [
     primaryKey({ name: 'support_request_services_pk', columns: [t.supportRequestId, t.serviceId] }),
+  ],
+);
+
+export const bookings = pgTable(
+  'bookings',
+  {
+    id: text('id').primaryKey(),
+    supportRequestId: text('support_request_id')
+      .notNull()
+      .references(() => supportRequests.id, { onDelete: 'cascade' }),
+    workerId: text('worker_id')
+      .notNull()
+      .references(() => workers.id, { onDelete: 'restrict' }),
+    availabilitySlotId: text('availability_slot_id')
+      .notNull()
+      .references(() => availabilitySlots.id, { onDelete: 'restrict' }),
+    // Snapshot of the rate at booking time; later rate changes do not alter the booking.
+    hourlyRateCents: integer('hourly_rate_cents').notNull(),
+    status: bookingStatus('status').notNull().default('CONFIRMED'),
+    idempotencyKey: text('idempotency_key').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('bookings_idempotency_key_uq').on(t.idempotencyKey),
+    index('bookings_support_request_idx').on(t.supportRequestId),
+    uniqueIndex('bookings_one_confirmed_per_request_uq')
+      .on(t.supportRequestId)
+      .where(sql`${t.status} = 'CONFIRMED'`),
+    uniqueIndex('bookings_one_confirmed_per_slot_uq')
+      .on(t.availabilitySlotId)
+      .where(sql`${t.status} = 'CONFIRMED'`),
   ],
 );

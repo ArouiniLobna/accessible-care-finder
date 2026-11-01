@@ -16,7 +16,12 @@ export async function registerOpenApi(app: FastifyInstance): Promise<void> {
         description:
           'Independent portfolio project using fictional data. Not affiliated with, endorsed by, or connected to Mable or Attain Healthtech.',
       },
-      tags: [{ name: 'support-requests' }, { name: 'metadata' }, { name: 'health' }],
+      tags: [
+        { name: 'workers' },
+        { name: 'support-requests' },
+        { name: 'metadata' },
+        { name: 'health' },
+      ],
     },
   });
   // staticCSP gives the docs UI its own CSP; the API's JSON responses keep `default-src 'none'`.

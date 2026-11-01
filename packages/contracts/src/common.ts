@@ -1,5 +1,5 @@
 import { Type, type Static } from '@sinclair/typebox';
-import { API_ERROR_CODES } from './constants';
+import { API_ERROR_CODES, AVAILABILITY_STATUSES } from './constants';
 
 /** ISO 8601 instant, e.g. 2026-11-06T23:00:00.000Z. */
 export const IsoDateTime = Type.String({ format: 'date-time' });
@@ -10,6 +10,11 @@ export const EntityId = Type.String({
   pattern: '^[a-z0-9_-]+$',
   description: 'Opaque, URL-safe identifier.',
 });
+export const AvailabilityStatusSchema = Type.Union(
+  AVAILABILITY_STATUSES.map((status) => Type.Literal(status)),
+  { title: 'AvailabilityStatus' },
+);
+export type AvailabilityStatus = (typeof AVAILABILITY_STATUSES)[number];
 
 export const ServiceSchema = Type.Object(
   {

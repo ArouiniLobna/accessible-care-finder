@@ -13,6 +13,9 @@ import { createSupportRequestService } from './modules/support-requests/support-
 import { registerErrorHandling } from './plugins/error-handler';
 import { registerOpenApi } from './plugins/openapi';
 import { genReqId, registerRequestLogging } from './plugins/request-logging';
+import { createWorkerRepository } from './modules/workers/worker.repository';
+import { workerRoutes } from './modules/workers/worker.routes';
+import { createWorkerService } from './modules/workers/worker.service';
 
 export interface AppDependencies {
   config: AppConfig;
@@ -64,12 +67,19 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
 
   // ---- Wiring
   const metadata = createMetadataRepository(db);
-  const supportRequests = createSupportRequestService(createSupportRequestRepository(db));
+  const supportRequestRepository = createSupportRequestRepository(db);
+  const supportRequests = createSupportRequestService(supportRequestRepository);
+  const workers = createWorkerService({
+    workers: createWorkerRepository(db),
+    supportRequests: supportRequestRepository,
+    metadata,
+  });
 
   // ---- Routes
   await app.register(healthRoutes, { db });
   await app.register(metadataRoutes, { prefix: '/api/metadata', metadata });
   await app.register(supportRequestRoutes, { prefix: '/api/support-requests', supportRequests });
+  await app.register(workerRoutes, { prefix: '/api/workers', workers });
 
   return app;
 }

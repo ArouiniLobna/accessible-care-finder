@@ -49,3 +49,28 @@ export const parseService = (item: Record<string, unknown>) => ({
   id: readString(item, 'id'),
   name: readString(item, 'name'),
 });
+
+/** Sort-key values (numeric → string, integer → number) normalised to an exact string. */
+export function readSortKey(row: Record<string, unknown>, field: string): string {
+  const value = row[field];
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  return fail(field, 'sortable value', value);
+}
+
+export function readBoolean(row: Record<string, unknown>, field: string): boolean {
+  const value = row[field];
+  return typeof value === 'boolean' ? value : fail(field, 'boolean', value);
+}
+
+export function readNullableString(row: Record<string, unknown>, field: string): string | null {
+  return row[field] === null || row[field] === undefined ? null : readString(row, field);
+}
+
+export const parseLanguage = (item: Record<string, unknown>) => ({
+  code: readString(item, 'code'),
+  name: readString(item, 'name'),
+});
+
+/** Round to one decimal for display-oriented distances. */
+export const roundKm = (km: number) => Math.round(km * 10) / 10;

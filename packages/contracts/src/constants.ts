@@ -5,7 +5,12 @@
  * *types* from `@acf/contracts`, so the schema builder never reaches the browser bundle.
  */
 
-export const API_ERROR_CODES = ['VALIDATION_ERROR', 'NOT_FOUND', 'INTERNAL_ERROR'] as const;
+export const API_ERROR_CODES = [
+  'VALIDATION_ERROR',
+  'NOT_FOUND',
+  'INVALID_CURSOR',
+  'INTERNAL_ERROR',
+] as const;
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 
@@ -15,3 +20,10 @@ export const SUPPORT_REQUEST_STATUSES = [
   'CANCELLED_NEEDS_REPLACEMENT',
   'REPLACEMENT_BOOKED',
 ] as const;
+
+export const SEARCH_RADII_KM = [5, 10, 20] as const;
+
+export const SEARCH_SORTS = ['recommended', 'closest', 'highest_rated', 'lowest_rate'] as const;
+
+export const SEARCH_PAGE_SIZE_DEFAULT = 12;
+export const SEARCH_PAGE_SIZE_MAX = 50;

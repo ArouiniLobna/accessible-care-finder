@@ -1,0 +1,41 @@
+{
+  "name": "accessible-care-finder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Accessible replacement support-worker search with realtime availability and concurrency-safe booking. Independent portfolio project using fictional data.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @acf/api --filter @acf/web dev",
+    "build": "pnpm -r build",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r typecheck && tsc -p e2e/tsconfig.json",
+    "test": "pnpm -r test",
+    "test:integration": "pnpm --filter @acf/api test:integration",
+    "test:e2e": "playwright test",
+    "db:generate": "pnpm --filter @acf/api db:generate",
+    "db:migrate": "pnpm --filter @acf/api db:migrate",
+    "db:seed": "pnpm --filter @acf/api db:seed",
+    "db:reset": "pnpm --filter @acf/api db:reset"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@eslint/js": "^9.39.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.10.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.46.0"
+  }
+}

@@ -1,0 +1,24 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Environment — commit .env.example only
+.env
+.env.*
+!.env.example
+
+# Test output
+playwright-report/
+test-results/
+blob-report/
+
+# Local database data (Docker volume is named; this guards bind mounts)
+.pgdata/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log

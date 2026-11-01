@@ -1,4 +1,17 @@
 import { Type, type Static } from '@sinclair/typebox';
+import { LanguageSchema, ServiceSchema } from './common';
+
+export const ServicesResponseSchema = Type.Object(
+  { items: Type.Array(ServiceSchema) },
+  { title: 'ServicesResponse', additionalProperties: false },
+);
+export type ServicesResponse = Static<typeof ServicesResponseSchema>;
+
+export const LanguagesResponseSchema = Type.Object(
+  { items: Type.Array(LanguageSchema) },
+  { title: 'LanguagesResponse', additionalProperties: false },
+);
+export type LanguagesResponse = Static<typeof LanguagesResponseSchema>;
 
 export const HealthResponseSchema = Type.Object(
   {

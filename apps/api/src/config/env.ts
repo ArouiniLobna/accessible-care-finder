@@ -9,6 +9,8 @@ export interface AppConfig {
   logLevel: 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'silent';
   databaseUrl: string;
   databasePoolMax: number;
+  corsOrigins: string[];
+  enableApiDocs: boolean;
 }
 
 type Env = Record<string, string | undefined>;
@@ -25,6 +27,14 @@ function readEnum<T extends string>(env: Env, key: string, allowed: readonly T[]
   return match;
 }
 
+function readBool(env: Env, key: string, fallback: boolean): boolean {
+  const raw = env[key];
+  if (raw === undefined || raw === '') return fallback;
+  if (raw === 'true' || raw === '1') return true;
+  if (raw === 'false' || raw === '0') return false;
+  throw new ConfigError(`${key} must be true or false`);
+}
+
 function readInt(env: Env, key: string, fallback: number, min = 0, max = Number.MAX_SAFE_INTEGER) {
   const raw = env[key];
   if (raw === undefined || raw === '') return fallback;
@@ -37,6 +47,7 @@ function readInt(env: Env, key: string, fallback: number, min = 0, max = Number.
 
 export function loadConfig(env: Env = process.env): AppConfig {
   const nodeEnv = readEnum(env, 'NODE_ENV', ['development', 'test', 'production'], 'development');
+  const isProduction = nodeEnv === 'production';
 
   const databaseUrl = env['DATABASE_URL'];
   if (!databaseUrl) throw new ConfigError('DATABASE_URL is required');
@@ -53,5 +64,11 @@ export function loadConfig(env: Env = process.env): AppConfig {
     ),
     databaseUrl,
     databasePoolMax: readInt(env, 'DATABASE_POOL_MAX', 10, 1, 100),
+    corsOrigins: (env['CORS_ORIGINS'] ?? 'http://localhost:5173')
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+    // Interactive docs are never enabled in production, whatever the variable says.
+    enableApiDocs: !isProduction && readBool(env, 'ENABLE_API_DOCS', true),
   };
 }

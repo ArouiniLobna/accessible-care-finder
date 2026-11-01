@@ -1,6 +1,34 @@
 import { Type, type Static } from '@sinclair/typebox';
 import { API_ERROR_CODES } from './constants';
 
+/** ISO 8601 instant, e.g. 2026-11-06T23:00:00.000Z. */
+export const IsoDateTime = Type.String({ format: 'date-time' });
+
+export const EntityId = Type.String({
+  minLength: 1,
+  maxLength: 64,
+  pattern: '^[a-z0-9_-]+$',
+  description: 'Opaque, URL-safe identifier.',
+});
+
+export const ServiceSchema = Type.Object(
+  {
+    id: Type.String({ description: 'Stable slug, e.g. personal-care.' }),
+    name: Type.String(),
+  },
+  { title: 'Service', additionalProperties: false },
+);
+export type Service = Static<typeof ServiceSchema>;
+
+export const LanguageSchema = Type.Object(
+  {
+    code: Type.String({ description: 'ISO 639-1 code.' }),
+    name: Type.String(),
+  },
+  { title: 'Language', additionalProperties: false },
+);
+export type Language = Static<typeof LanguageSchema>;
+
 export const ApiErrorCodeSchema = Type.Union(
   API_ERROR_CODES.map((code) => Type.Literal(code)),
   { title: 'ApiErrorCode' },

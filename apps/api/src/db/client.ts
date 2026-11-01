@@ -1,7 +1,8 @@
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
+import * as schema from './schema';
 
-export type Database = NodePgDatabase;
+export type Database = NodePgDatabase<typeof schema>;
 
 export interface DatabaseHandle {
   db: Database;
@@ -17,6 +18,6 @@ export function createDatabase(connectionString: string, maxConnections = 10): D
     connectionTimeoutMillis: 5_000,
     application_name: 'accessible-care-finder-api',
   });
-  const db = drizzle({ client: pool });
+  const db = drizzle({ client: pool, schema });
   return { db, pool, close: () => pool.end() };
 }

@@ -8,3 +8,10 @@
 export const API_ERROR_CODES = ['VALIDATION_ERROR', 'NOT_FOUND', 'INTERNAL_ERROR'] as const;
 
 export const REQUEST_ID_HEADER = 'x-request-id';
+
+export const AVAILABILITY_STATUSES = ['AVAILABLE', 'TENTATIVE', 'BOOKED', 'UNAVAILABLE'] as const;
+
+export const SUPPORT_REQUEST_STATUSES = [
+  'CANCELLED_NEEDS_REPLACEMENT',
+  'REPLACEMENT_BOOKED',
+] as const;

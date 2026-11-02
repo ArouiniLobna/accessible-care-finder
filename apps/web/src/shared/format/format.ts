@@ -35,6 +35,29 @@ export function formatTimeZoneAbbreviation(iso: string, timeZone: string): strin
   return parts.find((part) => part.type === 'timeZoneName')?.value ?? timeZone;
 }
 
+export function durationMinutes(startIso: string, endIso: string): number {
+  return Math.round((new Date(endIso).getTime() - new Date(startIso).getTime()) / 60_000);
+}
+
+/** 180 → "3 hours", 90 → "1 hour 30 minutes" */
+export function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const parts: string[] = [];
+  if (hours > 0) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
+  if (rest > 0) parts.push(`${rest} ${rest === 1 ? 'minute' : 'minutes'}`);
+  return parts.join(' ') || '0 minutes';
+}
+
+/** Mirrors the API's estimate: rate × real duration, rounded to the cent. */
+export function estimateTotalCents(
+  hourlyRateCents: number,
+  startIso: string,
+  endIso: string,
+): number {
+  return Math.round((hourlyRateCents * durationMinutes(startIso, endIso)) / 60);
+}
+
 /** ["English", "Arabic"] → "English and Arabic" */
 export function formatList(items: readonly string[]): string {
   return new Intl.ListFormat(LOCALE, { style: 'long', type: 'conjunction' }).format(items);

@@ -1,0 +1,32 @@
+.page {
+  max-width: var(--layout-narrow-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.page h1 {
+  margin-bottom: 0;
+}
+
+.section h2 {
+  font-size: var(--font-size-lg);
+}
+
+.note {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (max-width: 30rem) {
+  .actions > * {
+    width: 100%;
+  }
+}

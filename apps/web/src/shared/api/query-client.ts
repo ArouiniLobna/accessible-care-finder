@@ -9,6 +9,7 @@ export const STALE_TIMES = {
   supportRequest: 30_000,
   /** Services and languages change on deploys, not during a session. */
   metadata: 60 * 60_000,
+  booking: Infinity,
 } as const;
 
 export function createQueryClient() {

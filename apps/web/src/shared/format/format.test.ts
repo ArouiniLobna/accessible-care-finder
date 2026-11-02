@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   displayName,
+  estimateTotalCents,
+  formatDuration,
   formatList,
   formatMoney,
   formatSessionDate,
@@ -33,5 +35,10 @@ describe('format', () => {
 
   it('builds display names from first name and last initial only', () => {
     expect(displayName({ firstName: 'Amelia', lastInitial: 'R' })).toBe('Amelia R.');
+  });
+  it('formats durations and estimates', () => {
+    expect(formatDuration(180)).toBe('3 hours');
+    expect(formatDuration(90)).toBe('1 hour 30 minutes');
+    expect(estimateTotalCents(5800, start, end)).toBe(17400);
   });
 });

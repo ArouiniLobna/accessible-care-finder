@@ -11,6 +11,12 @@ const ReplacementSearchPage = lazy(
 );
 const WorkerProfilePage = lazy(() => import('../features/worker-profile/pages/WorkerProfilePage'));
 const DemoControlsPage = lazy(() => import('../features/demo-controls/pages/DemoControlsPage'));
+const ReviewReplacementPage = lazy(
+  () => import('../features/replacement-booking/pages/ReviewReplacementPage'),
+);
+const ConfirmationPage = lazy(
+  () => import('../features/replacement-booking/pages/ConfirmationPage'),
+);
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +27,11 @@ export const router = createBrowserRouter([
       { path: '/workers/:workerId', element: <WorkerProfilePage /> },
       { path: '/components', element: <ComponentsPage /> },
       { path: '/demo-controls', element: <DemoControlsPage /> },
+      {
+        path: '/replacement/:supportRequestId/review/:workerId',
+        element: <ReviewReplacementPage />,
+      },
+      { path: '/bookings/:bookingId/confirmation', element: <ConfirmationPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

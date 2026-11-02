@@ -19,5 +19,6 @@ export const queryKeys = {
 
   services: () => ['metadata', 'services'] as const,
   languages: () => ['metadata', 'languages'] as const,
+  booking: (id: string) => ['bookings', id] as const,
   demoAvailability: () => ['demo', 'availability'] as const,
 };

@@ -15,6 +15,9 @@ import {
 } from '@acf/ui';
 import { PageHeading } from '../../../shared/accessibility/page-heading';
 import styles from './ComponentsPage.module.css';
+import type { AvailabilityStatus, WorkerSummary } from '@acf/contracts';
+import { AvailabilityBadge } from '../../replacement-search/components/AvailabilityBadge';
+import { WorkerCard } from '../../replacement-search/components/WorkerCard';
 
 const COLOR_TOKENS: { token: string; use: string; contrast?: string }[] = [
   { token: '--color-text-primary', use: 'Body text', contrast: '15.1 : 1 on background' },
@@ -30,6 +33,26 @@ const COLOR_TOKENS: { token: string; use: string; contrast?: string }[] = [
 ];
 
 const SPACING = ['--space-1', '--space-2', '--space-3', '--space-4', '--space-6', '--space-8'];
+const sampleWorker = (status: AvailabilityStatus): WorkerSummary => ({
+  id: `sample_${status.toLowerCase()}`,
+  firstName: status === 'AVAILABLE' ? 'Jordan' : 'Casey',
+  lastInitial: status === 'AVAILABLE' ? 'P' : 'W',
+  verified: true,
+  rating: 4.8,
+  reviewCount: 23,
+  hourlyRateCents: 6000,
+  distanceKm: 3.1,
+  services: [
+    { id: 'personal-care', name: 'Personal care' },
+    { id: 'meal-preparation', name: 'Meal preparation' },
+  ],
+  languages: [
+    { code: 'en', name: 'English' },
+    { code: 'vi', name: 'Vietnamese' },
+  ],
+  hasTransport: true,
+  availability: { slotId: 'sample', status, version: 1 },
+});
 
 const SECTIONS = [
   ['tokens', 'Tokens'],
@@ -37,6 +60,7 @@ const SECTIONS = [
   ['forms', 'Form fields'],
   ['status', 'Status'],
   ['loading', 'Loading and empty'],
+  ['cards', 'Worker cards'],
 ] as const;
 
 function Example({ title, children, note }: { title: string; children: ReactNode; note?: string }) {
@@ -220,6 +244,14 @@ export default function ComponentsPage() {
             Problem
           </Badge>
         </Example>
+        <Example
+          title="Availability"
+          note="Booked and unavailable both read “No longer available” to customers."
+        >
+          {(['AVAILABLE', 'TENTATIVE', 'BOOKED', 'UNAVAILABLE'] as const).map((status) => (
+            <AvailabilityBadge key={status} status={status} />
+          ))}
+        </Example>
         <div className={styles.stack}>
           <Alert tone="info" title="Information" headingLevel={3}>
             <p>Neutral guidance.</p>
@@ -262,6 +294,24 @@ export default function ComponentsPage() {
         >
           <p>Try increasing the search radius or removing an optional filter.</p>
         </EmptyState>
+      </CatalogueSection>
+      <CatalogueSection id="cards" title="Worker cards">
+        <ul className={styles.cards}>
+          <li>
+            <WorkerCard
+              worker={sampleWorker('AVAILABLE')}
+              profileHref="/components"
+              selectHref="/components"
+            />
+          </li>
+          <li>
+            <WorkerCard
+              worker={sampleWorker('UNAVAILABLE')}
+              profileHref="/components"
+              selectHref="/components"
+            />
+          </li>
+        </ul>
       </CatalogueSection>
     </div>
   );

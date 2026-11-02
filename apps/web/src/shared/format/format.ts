@@ -3,6 +3,12 @@
  * currency. No string slicing of ISO dates, so DST and locale are handled by the platform.
  */
 const LOCALE = 'en-AU';
+const currency = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'AUD' });
+
+/** 5800 → "$58.00" */
+export function formatMoney(cents: number): string {
+  return currency.format(cents / 100);
+}
 
 /** "Saturday 7 November 2026" — absolute, never just "Tomorrow". */
 export function formatSessionDate(iso: string, timeZone: string): string {
@@ -28,3 +34,11 @@ export function formatTimeZoneAbbreviation(iso: string, timeZone: string): strin
   );
   return parts.find((part) => part.type === 'timeZoneName')?.value ?? timeZone;
 }
+
+/** ["English", "Arabic"] → "English and Arabic" */
+export function formatList(items: readonly string[]): string {
+  return new Intl.ListFormat(LOCALE, { style: 'long', type: 'conjunction' }).format(items);
+}
+
+export const displayName = (person: { firstName: string; lastInitial: string }) =>
+  `${person.firstName} ${person.lastInitial}.`;

@@ -1,0 +1,23 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.page h1 {
+  margin-bottom: 0;
+}
+
+/* Single column on small screens (filters first), sidebar + results from 60rem. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: var(--layout-sidebar-width) minmax(0, 1fr);
+  }
+}

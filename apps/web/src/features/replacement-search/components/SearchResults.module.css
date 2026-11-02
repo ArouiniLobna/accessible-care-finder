@@ -1,0 +1,64 @@
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.heading {
+  margin-bottom: var(--space-1);
+}
+
+.status {
+  margin: 0;
+  /* Reserve a line so swapping "Updating…" for the count never shifts the layout. */
+  min-height: calc(var(--font-size-base) * var(--line-height-base));
+  color: var(--color-text-secondary);
+}
+
+.sort {
+  min-width: 14rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Old results stay visible but recede slightly while new ones load. */
+.grid[aria-busy='true'] {
+  opacity: 0.7;
+}
+
+.skeletonCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 30rem) {
+  .sort {
+    min-width: 100%;
+  }
+}

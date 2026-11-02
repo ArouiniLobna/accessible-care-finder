@@ -3,6 +3,9 @@ import { isApiRequestError } from './http';
 
 /** Freshness is chosen per query family (see each feature's api/ module); this is the fallback. */
 export const STALE_TIMES = {
+  /** Profile data is stable; availability inside results is kept fresh by SSE patches. */
+  search: 30_000,
+  profile: 60_000,
   supportRequest: 30_000,
   /** Services and languages change on deploys, not during a session. */
   metadata: 60 * 60_000,

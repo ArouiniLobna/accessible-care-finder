@@ -11,6 +11,9 @@ export interface AppConfig {
   databasePoolMax: number;
   corsOrigins: string[];
   enableApiDocs: boolean;
+  enableDemoControls: boolean;
+  demoLatency: { minMs: number; maxMs: number };
+  sseHeartbeatMs: number;
 }
 
 type Env = Record<string, string | undefined>;
@@ -52,6 +55,10 @@ export function loadConfig(env: Env = process.env): AppConfig {
   const databaseUrl = env['DATABASE_URL'];
   if (!databaseUrl) throw new ConfigError('DATABASE_URL is required');
 
+  const minMs = readInt(env, 'DEMO_LATENCY_MIN_MS', 0, 0, 10_000);
+  const maxMs = readInt(env, 'DEMO_LATENCY_MAX_MS', 0, 0, 10_000);
+  if (maxMs < minMs) throw new ConfigError('DEMO_LATENCY_MAX_MS must be >= DEMO_LATENCY_MIN_MS');
+
   return {
     nodeEnv,
     host: env['API_HOST'] || '127.0.0.1',
@@ -70,5 +77,9 @@ export function loadConfig(env: Env = process.env): AppConfig {
       .filter(Boolean),
     // Interactive docs are never enabled in production, whatever the variable says.
     enableApiDocs: !isProduction && readBool(env, 'ENABLE_API_DOCS', true),
+    enableDemoControls: readBool(env, 'ENABLE_DEMO_CONTROLS', false),
+    // Artificial latency is never enabled in production.
+    demoLatency: isProduction ? { minMs: 0, maxMs: 0 } : { minMs, maxMs },
+    sseHeartbeatMs: readInt(env, 'SSE_HEARTBEAT_MS', 15_000, 1_000, 120_000),
   };
 }

@@ -10,3 +10,10 @@ export async function resetDemoData(db: Database, now = new Date()) {
   });
   return dataset;
 }
+
+export {
+  DEMO_SUPPORT_REQUEST_ID,
+  DEMO_TIMEZONE,
+  FEATURED_WORKER_IDS,
+  sessionSlotId,
+} from './seed-data';

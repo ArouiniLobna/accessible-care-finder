@@ -26,6 +26,8 @@ process.on('SIGTERM', () => void shutdown('SIGTERM'));
 try {
   await app.listen({ host: config.host, port: config.port });
   if (config.enableApiDocs) app.log.info(`API docs: http://localhost:${config.port}/docs`);
+  if (config.enableDemoControls)
+    app.log.warn('Demo-only routes are enabled (ENABLE_DEMO_CONTROLS=true)');
 } catch (error) {
   app.log.error({ err: error }, 'failed to start');
   await database.close();

@@ -17,10 +17,12 @@ export async function registerOpenApi(app: FastifyInstance): Promise<void> {
           'Independent portfolio project using fictional data. Not affiliated with, endorsed by, or connected to Mable or Attain Healthtech.',
       },
       tags: [
+        { name: 'support-requests' },
         { name: 'workers' },
         { name: 'bookings' },
-        { name: 'support-requests' },
+        { name: 'realtime', description: 'Server-Sent Events' },
         { name: 'metadata' },
+        { name: 'demo', description: 'Demo-only. Feature-flagged.' },
         { name: 'health' },
       ],
     },

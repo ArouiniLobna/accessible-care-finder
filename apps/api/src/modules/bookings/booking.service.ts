@@ -7,6 +7,7 @@ import {
   createAvailabilityRepository,
   type ChangedSlot,
 } from '../availability/availability.repository';
+import type { AvailabilityNotifier } from '../availability/availability.service';
 import { createSupportRequestRepository } from '../support-requests/support-request.repository';
 import { createBookingRepository, type BookingIdentity } from './booking.repository';
 
@@ -49,8 +50,12 @@ type TransactionOutcome =
   | { kind: 'created'; bookingId: string; change: ChangedSlot }
   | { kind: 'replayed'; bookingId: string };
 
-export function createBookingService(deps: { db: Database; log: FastifyBaseLogger }) {
-  const { db, log } = deps;
+export function createBookingService(deps: {
+  db: Database;
+  notifier: AvailabilityNotifier;
+  log: FastifyBaseLogger;
+}) {
+  const { db, notifier, log } = deps;
   const bookings = createBookingRepository(db);
 
   async function loadResponse(bookingId: string): Promise<BookingResponse> {
@@ -144,7 +149,8 @@ export function createBookingService(deps: { db: Database; log: FastifyBaseLogge
       if (outcome.kind === 'replayed') {
         return { booking: await loadResponse(outcome.bookingId), replayed: true };
       }
-
+      // Only after COMMIT: tell other browsers the slot is gone.
+      notifier.announce(outcome.change);
       log.info(
         {
           bookingId: outcome.bookingId,

@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm';
-import type { AvailabilityStatus } from '@acf/contracts';
 import { AVAILABILITY_STATUSES } from '@acf/contracts/constants';
 import type { Executor } from '../../db/client';
-import { readDate, readNumber, readString } from '../../shared/db-values';
+import type { AvailabilityStatus, DemoSlot } from '@acf/contracts';
+import { readBoolean, readDate, readNumber, readString } from '../../shared/db-values';
 
 /** A slot that just changed: what other browsers need to hear about (Step 9). */
 export interface ChangedSlot {
@@ -71,6 +71,56 @@ export function createAvailabilityRepository(db: Executor) {
         SELECT 1 FROM availability_slots WHERE id = ${slotId} AND worker_id = ${workerId}
       `);
       return result.rows.length > 0;
+    },
+    /** Demo only: force a slot's status and bump its version, as another customer would. */
+    async setStatus(slotId: string, status: AvailabilityStatus): Promise<ChangedSlot | null> {
+      const result = await db.execute(sql`
+        WITH changed AS (
+          UPDATE availability_slots
+          SET status = ${status}, version = version + 1, updated_at = now()
+          WHERE id = ${slotId}
+          RETURNING id, worker_id, status, version, updated_at
+        )
+        SELECT changed.*, w.first_name, w.last_initial
+        FROM changed JOIN workers w ON w.id = changed.worker_id
+      `);
+      const row = result.rows[0];
+      return row ? toChangedSlot(row) : null;
+    },
+
+    /** Demo only: every slot on the demo session's day, featured workers first. */
+    async listSlotsForSessionDay(
+      supportRequestId: string,
+      featuredWorkerIds: readonly string[],
+    ): Promise<DemoSlot[]> {
+      const result = await db.execute(sql`
+        SELECT
+          a.id, a.worker_id, a.starts_at, a.ends_at, a.status, a.version,
+          w.first_name, w.last_initial,
+          (a.starts_at <= r.starts_at AND a.ends_at >= r.ends_at) AS covers
+        FROM support_requests r
+        JOIN availability_slots a
+          ON a.starts_at < r.ends_at + interval '12 hours'
+         AND a.ends_at > r.starts_at - interval '12 hours'
+        JOIN workers w ON w.id = a.worker_id
+        WHERE r.id = ${supportRequestId}
+        ORDER BY
+          array_position(ARRAY[${sql.join(
+            featuredWorkerIds.map((id) => sql`${id}`),
+            sql`, `,
+          )}]::text[], a.worker_id) NULLS LAST,
+          w.first_name, a.worker_id
+      `);
+      return result.rows.map((row) => ({
+        slotId: readString(row, 'id'),
+        workerId: readString(row, 'worker_id'),
+        workerDisplayName: `${readString(row, 'first_name')} ${readString(row, 'last_initial')}.`,
+        startsAt: readDate(row, 'starts_at').toISOString(),
+        endsAt: readDate(row, 'ends_at').toISOString(),
+        status: parseStatus(readString(row, 'status')),
+        version: readNumber(row, 'version'),
+        coversDemoSession: readBoolean(row, 'covers'),
+      }));
     },
   };
 }

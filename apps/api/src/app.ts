@@ -18,6 +18,11 @@ import { workerRoutes } from './modules/workers/worker.routes';
 import { createWorkerService } from './modules/workers/worker.service';
 import { bookingRoutes } from './modules/bookings/booking.routes';
 import { createBookingService } from './modules/bookings/booking.service';
+import { AvailabilityEventHub } from './modules/availability/availability.events';
+import { availabilityEventRoutes } from './modules/availability/availability.routes';
+import { createAvailabilityNotifier } from './modules/availability/availability.service';
+import demoRoutes from './modules/demo/demo.routes';
+import { registerDemoLatency } from './plugins/demo-latency';
 
 export interface AppDependencies {
   config: AppConfig;
@@ -48,11 +53,14 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
     disableRequestLogging: true,
     bodyLimit: 16 * 1024,
     trustProxy: config.nodeEnv === 'production',
+    // Long-lived SSE sockets would otherwise keep app.close() waiting forever.
+    forceCloseConnections: true,
   }).withTypeProvider<TypeBoxTypeProvider>();
 
   // ---- Cross-cutting concerns (registered before routes so their hooks apply everywhere)
   registerRequestLogging(app);
   registerErrorHandling(app);
+  registerDemoLatency(app, config.demoLatency);
 
   await app.register(helmet, {
     contentSecurityPolicy: {
@@ -61,13 +69,16 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
   });
   await app.register(cors, {
     origin: config.corsOrigins,
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['content-type', 'idempotency-key', 'x-request-id'],
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: ['content-type', 'idempotency-key', 'x-request-id', 'last-event-id'],
     exposedHeaders: ['x-request-id', 'idempotent-replayed'],
   });
   if (config.enableApiDocs) await registerOpenApi(app);
 
   // ---- Wiring
+  const hub = new AvailabilityEventHub({ heartbeatMs: config.sseHeartbeatMs });
+  app.addHook('onClose', async () => hub.close());
+  const notifier = createAvailabilityNotifier(hub);
   const metadata = createMetadataRepository(db);
   const supportRequestRepository = createSupportRequestRepository(db);
   const supportRequests = createSupportRequestService(supportRequestRepository);
@@ -76,7 +87,10 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
     supportRequests: supportRequestRepository,
     metadata,
   });
-  const bookings = createBookingService({ db, log: app.log });
+  const bookings = createBookingService({ db, notifier, log: app.log });
+  if (config.enableDemoControls) {
+    await app.register(demoRoutes, { db, notifier });
+  }
 
   // ---- Routes
   await app.register(healthRoutes, { db });
@@ -84,6 +98,7 @@ export async function buildApp({ config, db }: AppDependencies): Promise<Fastify
   await app.register(supportRequestRoutes, { prefix: '/api/support-requests', supportRequests });
   await app.register(workerRoutes, { prefix: '/api/workers', workers });
   await app.register(bookingRoutes, { prefix: '/api', bookings });
+  await app.register(availabilityEventRoutes, { prefix: '/api/events', hub });
 
   return app;
 }

@@ -16,6 +16,13 @@ export const API_ERROR_CODES = [
 ] as const;
 
 export const REQUEST_ID_HEADER = 'x-request-id';
+/** SSE event names emitted on GET /api/events/availability. */
+export const SSE_EVENTS = {
+  /** One slot changed. Data: AvailabilityChangedEvent. */
+  availabilityChanged: 'availability.changed',
+  /** Cached availability may be stale (missed events, demo reset): refetch. */
+  availabilityResync: 'availability.resync',
+} as const;
 export const IDEMPOTENCY_KEY_HEADER = 'idempotency-key';
 
 export const AVAILABILITY_STATUSES = ['AVAILABLE', 'TENTATIVE', 'BOOKED', 'UNAVAILABLE'] as const;

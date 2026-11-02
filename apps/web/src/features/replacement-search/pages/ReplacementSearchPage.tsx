@@ -7,6 +7,8 @@ import { SupportRequestSummary } from '../../support-session/components/SupportR
 import { useWorkerSearch } from '../api/useWorkerSearch';
 import { SearchResults } from '../components/SearchResults';
 import { useSearchFilters, withQuery } from '../hooks/useSearchFilters';
+import { useLanguages, useServices } from '../api/metadata';
+import { SearchFilters } from '../components/SearchFilters';
 import {
   clearOptionalFilters,
   hasOptionalFilters,
@@ -19,6 +21,8 @@ export default function ReplacementSearchPage() {
   const { supportRequestId = '' } = useParams();
   const { filters, setFilters, queryString } = useSearchFilters();
   const supportRequest = useSupportRequest(supportRequestId);
+  const services = useServices();
+  const languages = useLanguages();
 
   const sessionServiceIds = supportRequest.data?.services.map((service) => service.id) ?? [];
   const needsReplacement = supportRequest.data?.status === 'CANCELLED_NEEDS_REPLACEMENT';
@@ -72,6 +76,14 @@ export default function ReplacementSearchPage() {
         <>
           <SupportRequestSummary request={supportRequest.data} />
           <div className={styles.layout}>
+            <SearchFilters
+              filters={filters}
+              onChange={setFilters}
+              onClearOptional={() => setFilters(clearOptionalFilters(filters))}
+              services={services.data ?? supportRequest.data.services}
+              languages={languages.data ?? []}
+              sessionServiceIds={sessionServiceIds}
+            />
             <SearchResults
               query={search}
               sort={filters.sort}

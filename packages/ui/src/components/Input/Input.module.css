@@ -1,0 +1,24 @@
+.control {
+  width: 100%;
+  min-height: var(--target-size-min);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-strong) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  border-width: 3px;
+}
+
+.control:disabled {
+  background: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+}
+
+.select {
+  cursor: pointer;
+}

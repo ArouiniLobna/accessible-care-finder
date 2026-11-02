@@ -1,0 +1,28 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-weight: var(--font-weight-bold);
+}
+
+.required {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.error {
+  margin: 0;
+  padding-inline-start: var(--space-3);
+  border-inline-start: 0.25rem solid var(--color-danger);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}

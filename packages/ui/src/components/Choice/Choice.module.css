@@ -1,0 +1,99 @@
+.choice {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: var(--target-size-min);
+  padding-block: var(--space-2);
+}
+
+.input {
+  position: relative; /* sits above the row-wide label overlay, so it receives its own clicks */
+  z-index: 1;
+  flex: none;
+  appearance: none;
+  width: var(--control-indicator-size);
+  height: var(--control-indicator-size);
+  margin: 0.1rem 0 0;
+  border: var(--border-width-strong) solid var(--color-border-strong);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+}
+
+.checkbox {
+  border-radius: var(--radius-sm);
+}
+
+.radio {
+  border-radius: 50%;
+}
+
+/* Checked state: filled indicator AND a mark — never colour alone. */
+.input:checked {
+  background: var(--color-action);
+  border-color: var(--color-action);
+}
+
+.checkbox:checked::after {
+  content: '';
+  width: 0.55rem;
+  height: 0.95rem;
+  border: solid var(--color-text-on-action);
+  border-width: 0 3px 3px 0;
+  transform: translateY(-0.1rem) rotate(45deg);
+}
+
+.radio:checked::after {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-text-on-action);
+}
+
+.input:disabled {
+  background: var(--color-disabled-bg);
+  cursor: not-allowed;
+}
+
+.input:disabled + .text .label {
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.05rem;
+}
+
+.label {
+  cursor: pointer;
+}
+
+/* Extend the click target over the whole row, including the gap. */
+.label::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.description {
+  position: relative; /* keeps description text selectable above the label overlay */
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+@media (forced-colors: active) {
+  .input {
+    appearance: auto;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .input::after {
+    display: none;
+  }
+}

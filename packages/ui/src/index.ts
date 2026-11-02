@@ -10,6 +10,10 @@ export {
   type ButtonProps,
   type ButtonVariant,
 } from './components/Button/Button';
+export { Checkbox, Radio, type CheckboxProps, type RadioProps } from './components/Choice/Choice';
+export { Field, type FieldControlProps, type FieldProps } from './components/Field/Field';
+export { Fieldset, type FieldsetProps } from './components/Fieldset/Fieldset';
+export { Input, Select } from './components/Input/Input';
 export {
   EmptyState,
   LoadingIndicator,

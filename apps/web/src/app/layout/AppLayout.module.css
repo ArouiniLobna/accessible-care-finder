@@ -1,0 +1,110 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.skipLink {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-action);
+  font-weight: var(--font-weight-bold);
+  border: var(--border-width-strong) solid var(--color-action);
+  border-radius: var(--radius-sm);
+  transform: translateY(-200%);
+}
+
+/* Visibly on screen whenever it has focus. */
+.skipLink:focus {
+  transform: none;
+}
+
+.header {
+  background: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.headerInner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-size-min);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  text-decoration: none;
+}
+
+.logo {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-action);
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-size-min);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+}
+
+/* Current page: underline + weight, plus aria-current from NavLink. */
+.nav a[aria-current='page'] {
+  font-weight: var(--font-weight-bold);
+  text-decoration-thickness: 0.2em;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-12);
+}
+
+/* <main> is focusable only as the skip-link target; it needs no visible ring. */
+.main:focus {
+  outline: none;
+}
+
+.routeLoading {
+  padding: var(--space-8) 0;
+}
+
+.footer {
+  border-top: var(--border-width) solid var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.footer p {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-4);
+}

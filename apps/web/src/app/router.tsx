@@ -10,6 +10,7 @@ const ReplacementSearchPage = lazy(
   () => import('../features/replacement-search/pages/ReplacementSearchPage'),
 );
 const WorkerProfilePage = lazy(() => import('../features/worker-profile/pages/WorkerProfilePage'));
+const DemoControlsPage = lazy(() => import('../features/demo-controls/pages/DemoControlsPage'));
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: '/replacement/:supportRequestId', element: <ReplacementSearchPage /> },
       { path: '/workers/:workerId', element: <WorkerProfilePage /> },
       { path: '/components', element: <ComponentsPage /> },
+      { path: '/demo-controls', element: <DemoControlsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

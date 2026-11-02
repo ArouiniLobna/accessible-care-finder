@@ -3,11 +3,17 @@ import { Link, NavLink, Outlet } from 'react-router';
 import { LoadingIndicator } from '@acf/ui';
 import { AnnouncerRegion } from '../../shared/accessibility/announcer';
 import { RouteFocusBoundary } from '../../shared/accessibility/page-heading';
+import { LiveConnectionStatus } from '../../features/live-availability/components/LiveConnectionStatus';
+import { useAvailabilityStream } from '../../features/live-availability/hooks/useAvailabilityStream';
 import { config } from '../../shared/config';
 import styles from './AppLayout.module.css';
 
-/** Page chrome shared by every route: skip link, header, primary navigation, <main>, footer. */
+/**
+ * Page chrome shared by every route: skip link, header, primary navigation, <main>, footer.
+ * The availability stream is opened here so one tab holds exactly one EventSource.
+ */
 export function AppLayout() {
+  const connection = useAvailabilityStream();
   return (
     <div className={styles.page}>
       <a href="#main-content" className={styles.skipLink}>
@@ -35,8 +41,14 @@ export function AppLayout() {
               <li>
                 <NavLink to="/components">Components</NavLink>
               </li>
+              {config.demoControlsEnabled ? (
+                <li>
+                  <NavLink to="/demo-controls">Demo controls</NavLink>
+                </li>
+              ) : null}
             </ul>
           </nav>
+          <LiveConnectionStatus state={connection} />
         </div>
       </header>
 

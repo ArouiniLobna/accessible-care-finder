@@ -1,0 +1,62 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.page h1 {
+  margin-bottom: 0;
+}
+
+/* Wide tables scroll inside their own region (allowed by WCAG 1.4.10 for data tables);
+   the page itself never scrolls sideways. */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+}
+
+.table caption {
+  text-align: start;
+  padding-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.table th,
+.table td {
+  padding: var(--space-3);
+  border-bottom: var(--border-width) solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table thead th {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-bottom-width: var(--border-width-strong);
+  border-bottom-color: var(--color-border-strong);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.more summary {
+  min-height: var(--target-size-min);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-action);
+}
+
+.hint {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}

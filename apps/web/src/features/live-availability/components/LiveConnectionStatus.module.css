@@ -1,0 +1,9 @@
+.status {
+  margin: 0 0 0 auto;
+}
+
+@media (max-width: 40rem) {
+  .status {
+    margin-left: 0;
+  }
+}

@@ -8,7 +8,14 @@ import reactHooks from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/node_modules/**', 'apps/api/drizzle/**'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/node_modules/**',
+      'apps/api/drizzle/**',
+      'playwright-report/**',
+      'test-results/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strict,
@@ -41,7 +48,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/api/**/*.ts', '*.config.{js,ts}', '**/scripts/**/*.{js,mjs,ts}'],
+    files: ['apps/api/**/*.ts', '*.config.{js,ts}', '**/scripts/**/*.{js,mjs,ts}', 'e2e/**/*.ts'],
     languageOptions: { globals: globals.node },
   },
   {
